@@ -5,7 +5,7 @@ import com.vorono4ka.math.Point;
 import com.vorono4ka.math.Rect;
 import com.vorono4ka.streams.ByteStream;
 import com.vorono4ka.swf.ColorTransform;
-import com.vorono4ka.swf.GLImage;
+import com.vorono4ka.editor.renderer.texture.GLImage;
 import com.vorono4ka.swf.Matrix2x3;
 import com.vorono4ka.swf.SupercellSWF;
 import com.vorono4ka.swf.constants.Tag;

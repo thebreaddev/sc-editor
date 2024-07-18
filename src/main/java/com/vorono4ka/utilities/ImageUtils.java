@@ -6,6 +6,7 @@ import javax.imageio.ImageIO;
 import java.awt.image.*;
 import java.io.File;
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.nio.file.Path;
 
 public final class ImageUtils {
@@ -33,13 +34,12 @@ public final class ImageUtils {
         }
     }
 
-    public static BufferedImage createBufferedImageFromPixels(int width, int height, int[] pixelArray, boolean isLuminanceAlpha) {
-        DirectColorModel colorModel = isLuminanceAlpha ? LUMINANCE_ALPHA_MODEL : RGBA_MODEL;
+    public static BufferedImage createBufferedImageFromPixels(int width, int height, byte[] pixelArray, boolean isLuminanceAlpha) {
+        return createBufferedImageFromPixels(width, height, isLuminanceAlpha, new DataBufferByte(pixelArray, pixelArray.length));
+    }
 
-        SampleModel sampleModel = colorModel.createCompatibleSampleModel(width, height);
-        DataBufferInt dataBufferInt = new DataBufferInt(pixelArray, pixelArray.length);
-        WritableRaster writableRaster = Raster.createWritableRaster(sampleModel, dataBufferInt, null);
-        return new BufferedImage(colorModel, writableRaster, false, null);
+    public static BufferedImage createBufferedImageFromPixels(int width, int height, int[] pixelArray, boolean isLuminanceAlpha) {
+        return createBufferedImageFromPixels(width, height, isLuminanceAlpha, new DataBufferInt(pixelArray, pixelArray.length));
     }
 
     public static int[] cropPixelArray(int[] pixelArray, int originalWidth, int originalHeight, int width, int height, int offsetX, int offsetY) {
@@ -84,5 +84,16 @@ public final class ImageUtils {
                 pixelArray[flippedIndex] = oldPixel;
             }
         }
+    }
+
+    public static ByteBuffer getPixelBuffer(BufferedImage image) {
+        return BufferUtils.wrapDirect(((DataBufferByte) image.getRaster().getDataBuffer()).getData());
+    }
+
+    private static BufferedImage createBufferedImageFromPixels(int width, int height, boolean isLuminanceAlpha, DataBuffer dataBuffer) {
+        DirectColorModel colorModel = isLuminanceAlpha ? LUMINANCE_ALPHA_MODEL : RGBA_MODEL;
+        SampleModel sampleModel = colorModel.createCompatibleSampleModel(width, height);
+        WritableRaster writableRaster = Raster.createWritableRaster(sampleModel, dataBuffer, null);
+        return new BufferedImage(colorModel, writableRaster, false, null);
     }
 }

@@ -3,18 +3,19 @@ package com.vorono4ka.editor.renderer;
 import com.jogamp.opengl.GL3;
 import com.jogamp.opengl.util.PMVMatrix;
 import com.vorono4ka.editor.Main;
+import com.vorono4ka.editor.renderer.texture.GLImage;
+import com.vorono4ka.editor.renderer.texture.Texture;
 import com.vorono4ka.math.ReadonlyRect;
 import com.vorono4ka.math.Rect;
 import com.vorono4ka.resources.Assets;
 import com.vorono4ka.swf.ColorTransform;
-import com.vorono4ka.swf.GLImage;
 import com.vorono4ka.swf.Matrix2x3;
 import com.vorono4ka.swf.displayObjects.DisplayObject;
 import com.vorono4ka.swf.displayObjects.MovieClip;
 import com.vorono4ka.swf.displayObjects.StageSprite;
 import com.vorono4ka.utilities.BufferUtils;
+import com.vorono4ka.utilities.ImageUtils;
 import com.vorono4ka.utilities.MovieClipHelper;
-import com.vorono4ka.utilities.Utilities;
 
 import java.awt.image.BufferedImage;
 import java.nio.FloatBuffer;
@@ -93,7 +94,7 @@ public class Stage {
             this.gradientTexture = new GLImage();
         }
 
-        this.gradientTexture.createWithFormat(null, true, 1, 256, 2, Utilities.getPixelBuffer(imageBuffer), GL3.GL_LUMINANCE_ALPHA, GL3.GL_UNSIGNED_BYTE);
+        this.gradientTexture.createWithFormat(null, true, 1, 256, 2, ImageUtils.getPixelBuffer(imageBuffer), GL3.GL_LUMINANCE_ALPHA, GL3.GL_UNSIGNED_BYTE);
 
         this.camera.init(width, height);
 
@@ -118,7 +119,7 @@ public class Stage {
             try {
                 task.run();
             } catch (Exception e) {
-                System.out.println(e.getMessage());
+                System.err.println(e);
             }
 
             iterator.remove();

@@ -3,14 +3,12 @@ package com.vorono4ka.swf.originalObjects;
 import com.jogamp.opengl.GL3;
 import com.vorono4ka.compression.Decompressor;
 import com.vorono4ka.streams.ByteStream;
-import com.vorono4ka.swf.GLImage;
+import com.vorono4ka.editor.renderer.texture.GLImage;
 import com.vorono4ka.swf.SupercellSWF;
 import com.vorono4ka.swf.constants.Tag;
 import com.vorono4ka.swf.exceptions.LoadingFaultException;
 import com.vorono4ka.swf.exceptions.TextureFileNotFound;
 import com.vorono4ka.utilities.BufferUtils;
-import team.nulls.ntengine.assets.KhronosTexture;
-import team.nulls.ntengine.assets.KhronosTextureDataLoader;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -114,23 +112,23 @@ public class SWFTexture extends GLImage implements Savable {
 
         TextureInfo textureInfo = getTextureInfoByType(type);
 
-        KhronosTexture ktx = null;
+        ByteBuffer ktxData = null;
         Buffer pixels = null;
         switch (tag) {
             case KHRONOS_TEXTURE -> {
                 byte[] bytes = swf.readByteArray(khronosTextureLength);
-                ktx = KhronosTextureDataLoader.decodeKtx(BufferUtils.wrapDirect(bytes));
+                ktxData = BufferUtils.wrapDirect(bytes);
             }
             case COMPRESSED_KHRONOS_TEXTURE -> {
                 byte[] compressedData = getTextureFileBytes(swf, compressedTextureFilename);
                 byte[] decompressed = Decompressor.decompressZstd(compressedData, 0);
-                ktx = KhronosTextureDataLoader.decodeKtx(BufferUtils.wrapDirect(decompressed));
+                ktxData = BufferUtils.wrapDirect(decompressed);
             }
             default ->
                 pixels = this.loadTexture(swf, this.width, this.height, textureInfo.pixelBytes(), isSeparatedByTiles(tag));
         }
 
-        this.createWithFormat(ktx, false, tag.getTextureFilter(), this.width, this.height, pixels, textureInfo.pixelFormat(), textureInfo.pixelType());
+        this.createWithFormat(ktxData, false, tag.getTextureFilter(), this.width, this.height, pixels, textureInfo.pixelFormat(), textureInfo.pixelType());
     }
 
     @Override
